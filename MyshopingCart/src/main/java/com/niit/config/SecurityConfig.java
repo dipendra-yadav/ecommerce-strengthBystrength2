@@ -21,17 +21,18 @@ DataSource  datasource;
 //<security:http>
 @Override
 protected void configure(HttpSecurity http) throws Exception {
-	System.out.println("configure called******");
+	System.out.println("HttpSecurity Prepared******");
 	
 	http
 	.authorizeRequests()
 	.antMatchers("/").access("permitAll")
 	.antMatchers("/home").access("permitAll")
 	
-	//.and()
-	//.requiresChannel()
-	.antMatchers("/login").access("permitAll");
-	//.requiresSecure();//brings https //channel enforcement
+	//channel enforcement
+	.and()
+	.requiresChannel()
+	.antMatchers("/login")
+	.requiresSecure();//brings https 
 	
 	
 	
@@ -41,12 +42,19 @@ protected void configure(HttpSecurity http) throws Exception {
 	.authorizeRequests()
 	.antMatchers("/login").access("permitAll")
 	
+	
+	
+	
 	.antMatchers("/get**").access("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
 	.antMatchers("/adminHome").access("hasRole('ROLE_ADMIN')")//SPEL expression could be used
 	.antMatchers("/manage_product_**").access("hasRole('ROLE_ADMIN')")
 	.antMatchers("/manage_supplier_**").access("hasRole('ROLE_ADMIN')")
 	.antMatchers("/manage_category_**").access("hasRole('ROLE_ADMIN')")
 	
+	
+	
+	
+	//login
 	.and()
 	.formLogin().loginPage("/login")
 	.loginProcessingUrl("/j_spring_security_check")
@@ -55,6 +63,8 @@ protected void configure(HttpSecurity http) throws Exception {
 	.defaultSuccessUrl("/home")
 	.failureUrl("/login?error")
 	
+	
+	
 	//remember me
 	.and()
 	.rememberMe()
@@ -62,16 +72,22 @@ protected void configure(HttpSecurity http) throws Exception {
 	.key("loginkey")
 	
 	
+	//logout
 	.and()
 	.logout()
 	.logoutUrl("/j_spring_security_logout")
 	.logoutSuccessUrl("/login?logout")
 	.invalidateHttpSession(true)
 	
-	
+	 
+	 
+	 
+	//csrf protection
 	.and()
 	.csrf()
 	
+	
+	//exceptions
 	.and()
 	.exceptionHandling().accessDeniedPage("/invalid-access");
 	
@@ -91,7 +107,7 @@ public  void configureGlobal(AuthenticationManagerBuilder auth) throws Exception
 
 @Autowired
 public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-	 System.out.println("configAuthentication called****");
+	 System.out.println("AuthenticationManagerBuilder  Prepared****");
   auth.jdbcAuthentication().dataSource(datasource).usersByUsernameQuery(
 		"select name,password, enabled from user where name=?")
 	.authoritiesByUsernameQuery(
