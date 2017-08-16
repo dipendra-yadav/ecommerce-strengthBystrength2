@@ -28,9 +28,14 @@ protected void configure(HttpSecurity http) throws Exception {
 	.antMatchers("/").access("permitAll")
 	.antMatchers("/home").access("permitAll")
 	
-	.and()
-	.requiresChannel()
-	.antMatchers("/login").requiresSecure();//brings https //channel enforcement
+	//.and()
+	//.requiresChannel()
+	.antMatchers("/login").access("permitAll");
+	//.requiresSecure();//brings https //channel enforcement
+	
+	
+	
+	
 	
 	http
 	.authorizeRequests()
@@ -50,6 +55,13 @@ protected void configure(HttpSecurity http) throws Exception {
 	.defaultSuccessUrl("/home")
 	.failureUrl("/login?error")
 	
+	//remember me
+	.and()
+	.rememberMe()
+	.tokenValiditySeconds(2419200)//4 weeks
+	.key("loginkey")
+	
+	
 	.and()
 	.logout()
 	.logoutUrl("/j_spring_security_logout")
@@ -59,6 +71,7 @@ protected void configure(HttpSecurity http) throws Exception {
 	
 	.and()
 	.csrf()
+	
 	.and()
 	.exceptionHandling().accessDeniedPage("/invalid-access");
 	
