@@ -14,7 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class SecurityConfig   extends WebSecurityConfigurerAdapter {
 
 @Autowired
-DataSource  datasource;
+DataSource  prddataSource;
 	
 	
 
@@ -26,14 +26,14 @@ protected void configure(HttpSecurity http) throws Exception {
 	http
 	.authorizeRequests()
 	.antMatchers("/").access("permitAll")
-	.antMatchers("/home").access("permitAll")
+	.antMatchers("/home").access("permitAll");
 	
 	//channel enforcement
-	.and()
+	/*.and()
 	.requiresChannel()
 	.antMatchers("/login")
 	.requiresSecure();//brings https 
-	
+    */	
 	
 	
 	
@@ -107,8 +107,8 @@ public  void configureGlobal(AuthenticationManagerBuilder auth) throws Exception
 
 @Autowired
 public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-	 System.out.println("AuthenticationManagerBuilder  Prepared****");
-  auth.jdbcAuthentication().dataSource(datasource).usersByUsernameQuery(
+	 System.out.println("AuthenticationManagerBuilder  Prepared!!");
+  auth.jdbcAuthentication().dataSource(prddataSource).usersByUsernameQuery(
 		"select name,password, enabled from user where name=?")
 	.authoritiesByUsernameQuery(
 		"select name, role from user where name=?");
